@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f7f4">
+  <meta name="description" content="A fast, friendly express booking and check-in experience for modern practices.">
+  <title>Your Practice Express Hub | Varangian Digital</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17231f;
+      --muted: #718078;
+      --line: #e6ebe7;
+      --paper: #fff;
+      --canvas: #f5f7f4;
+      --green: #147d59;
+      --green-dark: #0e6043;
+      --mint: #e8f5ee;
+      --lime: #c9f06b;
+      --navy: #172621;
+      --shadow: 0 22px 65px rgba(28, 54, 41, .09);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% -12%, rgba(201, 240, 107, .22), transparent 34rem),
+        var(--canvas);
+      color: var(--ink);
+    }
+    button, input { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; }
+    .page { width: min(100% - 28px, 480px); margin: 0 auto; padding: 18px 0 108px; }
+    .topline { display: flex; align-items: center; justify-content: space-between; padding: 2px 3px 15px; }
+    .agency { display: flex; align-items: center; gap: 8px; color: #64736a; font-size: 11px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+    .agency-mark { display: grid; width: 23px; height: 23px; place-items: center; border-radius: 8px; background: var(--navy); color: var(--lime); font-size: 13px; }
+    .demo-tag { border: 1px solid #dfe7df; border-radius: 999px; padding: 6px 9px; color: #78857d; background: rgba(255,255,255,.55); font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .app { overflow: hidden; border: 1px solid rgba(223, 231, 225, .85); border-radius: 27px; background: var(--paper); box-shadow: var(--shadow); }
+    .trust { padding: 20px 21px 18px; border-bottom: 1px solid #eef1ed; }
+    .online { display: inline-flex; align-items: center; gap: 7px; color: var(--green); font-size: 11px; font-weight: 750; letter-spacing: .01em; }
+    .pulse { position: relative; width: 8px; height: 8px; border-radius: 50%; background: #38bc77; }
+    .pulse::after { position: absolute; inset: -4px; border: 1px solid rgba(56,188,119,.44); border-radius: 50%; content: ""; animation: pulse 1.8s ease-out infinite; }
+    @keyframes pulse { 0% { transform: scale(.7); opacity: .8; } 100% { transform: scale(1.7); opacity: 0; } }
+    .brand-row { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+    .brand-icon { display: grid; flex: 0 0 43px; width: 43px; height: 43px; place-items: center; border-radius: 15px; background: var(--mint); color: var(--green); }
+    .brand-icon svg { width: 23px; height: 23px; }
+    .brand-name { overflow: hidden; margin: 0; font-size: 20px; font-weight: 760; letter-spacing: -.045em; line-height: 1.18; text-overflow: ellipsis; }
+    .brand-caption { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .rating { display: flex; align-items: center; gap: 7px; margin-top: 15px; color: #69786f; font-size: 11px; }
+    .stars { color: #e5a528; font-size: 13px; letter-spacing: 1px; }
+    .verified { display: inline-flex; align-items: center; gap: 4px; color: #58675e; font-weight: 700; }
+    .verified svg { width: 13px; height: 13px; color: var(--green); }
+    .progress-wrap { padding: 18px 22px 0; }
+    .progress-labels { display: flex; justify-content: space-between; margin-bottom: 9px; color: #929d95; font-size: 10px; font-weight: 650; }
+    .progress-labels .current { color: var(--green); }
+    .progress-track { height: 4px; overflow: hidden; border-radius: 99px; background: #edf1ed; }
+    .progress-fill { width: 25%; height: 100%; border-radius: inherit; background: var(--green); transition: width .35s ease; }
+    .step-container { min-height: 360px; padding: 23px 22px 27px; }
+    .step { animation: enter .28s ease both; }
+    @keyframes enter { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    .eyebrow { margin: 0 0 8px; color: var(--green); font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    h2 { margin: 0; font-size: 25px; font-weight: 760; letter-spacing: -.055em; line-height: 1.15; }
+    .intro { margin: 8px 0 21px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .options { display: grid; gap: 10px; }
+    .option {
+      display: flex; width: 100%; min-height: 61px; align-items: center; justify-content: space-between;
+      gap: 12px; border: 1px solid var(--line); border-radius: 15px; padding: 13px 15px;
+      background: #fff; color: var(--ink); text-align: left; cursor: pointer; transition: border-color .16s, background .16s, transform .16s;
+    }
+    .option:hover, .option:focus-visible { transform: translateY(-1px); border-color: #9dc8ad; background: #fbfefb; outline: none; }
+    .option-label { font-size: 13px; font-weight: 675; line-height: 1.35; }
+    .option-arrow { flex: 0 0 auto; color: #98a39b; font-size: 18px; }
+    .timing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .time-option { display: flex; min-height: 105px; flex-direction: column; align-items: flex-start; justify-content: space-between; padding: 14px; }
+    .time-option .option-label { font-size: 13px; }
+    .hint { color: var(--muted); font-size: 10px; line-height: 1.4; }
+    .time-icon { color: var(--green); font-size: 17px; line-height: 1; }
+    .summary { display: flex; flex-wrap: wrap; gap: 7px; margin: 16px 0 19px; }
+    .summary-pill { border: 1px solid #e4eee6; border-radius: 999px; padding: 7px 10px; background: #f4faf5; color: #456b55; font-size: 10px; font-weight: 700; }
+    .field { display: block; margin: 0 0 13px; }
+    .field-label { display: block; margin-bottom: 6px; color: #46534b; font-size: 11px; font-weight: 700; }
+    .input { width: 100%; min-height: 46px; border: 1px solid #dfe6e0; border-radius: 12px; padding: 0 13px; background: #fff; color: var(--ink); font-size: 14px; outline: none; transition: border .16s, box-shadow .16s; }
+    .input:focus { border-color: #67a982; box-shadow: 0 0 0 3px rgba(20,125,89,.1); }
+    .input::placeholder { color: #a4aea7; }
+    .checkbox-row { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 19px; color: #55625a; font-size: 11px; line-height: 1.5; cursor: pointer; }
+    .checkbox-row input { width: 16px; height: 16px; flex: 0 0 auto; margin: 1px 0 0; accent-color: var(--green); }
+    .primary {
+      display: flex; width: 100%; min-height: 51px; align-items: center; justify-content: center; gap: 8px;
+      border: 0; border-radius: 13px; padding: 12px 14px; background: var(--green); color: white;
+      font-size: 13px; font-weight: 750; cursor: pointer; box-shadow: 0 7px 16px rgba(20,125,89,.17); transition: background .15s, transform .15s;
+    }
+    .primary:hover { transform: translateY(-1px); background: var(--green-dark); }
+    .primary:focus-visible, .secondary:focus-visible, .option:focus-visible, .whatsapp:focus-visible { outline: 3px solid rgba(20,125,89,.28); outline-offset: 3px; }
+    .privacy-note { margin: 11px 0 0; color: #929c95; font-size: 10px; line-height: 1.5; text-align: center; }
+    .error { display: none; margin: -4px 0 12px; color: #b42318; font-size: 11px; }
+    .success-card { border: 1px solid #ccebd6; border-radius: 16px; padding: 15px; background: #effaf2; }
+    .success-heading { display: flex; align-items: center; gap: 9px; color: #126642; font-size: 14px; font-weight: 780; }
+    .check-icon { display: grid; width: 27px; height: 27px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #d8f2df; font-size: 15px; }
+    .success-copy { margin: 8px 0 0 36px; color: #536d5b; font-size: 11px; line-height: 1.55; }
+    .demo-disclaimer { margin: 9px 0 0 36px; color: #79887d; font-size: 10px; line-height: 1.5; }
+    .terminal { margin-top: 16px; overflow: hidden; border-radius: 15px; background: #15231e; color: #dce8df; }
+    .terminal-head { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,255,255,.1); padding: 11px 13px; color: #b6c9bc; font-size: 10px; font-weight: 700; }
+    .terminal-dot { width: 7px; height: 7px; border-radius: 50%; background: #8bd078; box-shadow: 0 0 10px rgba(139,208,120,.5); }
+    .terminal-body { overflow-x: auto; margin: 0; padding: 14px; color: #d3efbf; font: 10px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; }
+    .terminal-foot { border-top: 1px solid rgba(255,255,255,.09); padding: 9px 13px; color: #9aaea1; font-size: 9px; }
+    .proof-actions { display: grid; gap: 9px; margin-top: 15px; }
+    .secondary { min-height: 44px; border: 1px solid #dfe7e0; border-radius: 12px; padding: 10px; background: white; color: #405047; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .plaque-button { border: 0; background: transparent; color: var(--green); font-size: 11px; font-weight: 700; cursor: pointer; }
+    .footer-note { margin: 14px 5px 0; color: #929d95; font-size: 10px; line-height: 1.5; text-align: center; }
+    .sticky-bar { position: fixed; z-index: 4; right: 0; bottom: 0; left: 0; padding: 11px 14px calc(11px + env(safe-area-inset-bottom)); background: rgba(245,247,244,.92); backdrop-filter: blur(14px); }
+    .sticky-inner { width: min(100%, 480px); margin: auto; }
+    .whatsapp { display: flex; min-height: 48px; align-items: center; justify-content: center; gap: 9px; border-radius: 14px; background: #1fae64; color: white; font-size: 13px; font-weight: 760; text-decoration: none; box-shadow: 0 7px 18px rgba(18,115,64,.2); }
+    .whatsapp svg { width: 19px; height: 19px; }
+    .modal-backdrop { position: fixed; z-index: 8; inset: 0; display: none; align-items: flex-end; justify-content: center; padding: 16px; background: rgba(13,25,19,.48); backdrop-filter: blur(3px); }
+    .modal-backdrop.open { display: flex; }
+    .modal { width: min(100%, 460px); border-radius: 22px; padding: 20px; background: white; box-shadow: 0 20px 60px rgba(0,0,0,.2); animation: enter .2s ease both; }
+    .modal-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .modal h3 { margin: 0; font-size: 18px; letter-spacing: -.04em; }
+    .modal p { color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .close-modal { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 50%; background: white; color: #56645a; font-size: 18px; cursor: pointer; }
+    .qr-preview { display: flex; align-items: center; gap: 15px; margin: 18px 0; border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: #fafcf9; }
+    .qr-grid { display: grid; width: 87px; height: 87px; flex: 0 0 auto; grid-template-columns: repeat(9,1fr); grid-template-rows: repeat(9,1fr); gap: 2px; padding: 5px; border-radius: 8px; background: white; box-shadow: 0 1px 5px #dce5dc; }
+    .qr-grid span { border-radius: 1px; background: #20342a; }
+    .qr-grid span.off { background: transparent; }
+    .qr-copy strong { display: block; font-size: 12px; }
+    .qr-copy span { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; clip-path: inset(50%); }
+    @media (min-width: 600px) {
+      .page { padding-top: 32px; }
+      .modal-backdrop { align-items: center; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="topline">
+      <div class="agency"><span class="agency-mark" aria-hidden="true">V</span> Varangian Digital</div>
+      <span class="demo-tag">Interactive demo</span>
+    </div>
+
+    <section class="app" aria-label="Express booking demo">
+      <header class="trust">
+        <div class="online"><span class="pulse" aria-hidden="true"></span>24/7 Automated Desk Online</div>
+        <div class="brand-row">
+          <div class="brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.2-7-10V5l7-3 7 3v6c0 5.8-7 10-7 10Z"/><path d="M12 7v8M8 11h8"/></svg>
+          </div>
+          <div>
+            <h1 class="brand-name" id="clinic-name">Your Practice Express Hub</h1>
+            <p class="brand-caption">Care made easy. Check in from anywhere.</p>
+          </div>
+        </div>
+        <div class="rating">
+          <span class="stars" aria-label="5 out of 5 stars">★★★★★</span>
+          <span class="verified"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.7 12.2 3l2.5.1 1.2 2.2 2 1.5-.5 2.5.5 2.5-2 1.5-1.2 2.2-2.5.1L10 17l-2.2-1.4-2.5-.1-1.2-2.2-2-1.5.5-2.5-.5-2.5 2-1.5 1.2-2.2 2.5-.1L10 1.7Zm-1.1 10.6 4.7-4.7-1.1-1.1-3.6 3.6-1.7-1.7-1.1 1.1 2.8 2.8Z"/></svg>4.9 Google Verified</span>
+        </div>
+      </header>
+
+      <div class="progress-wrap" aria-label="Booking progress">
+        <div class="progress-labels" id="progress-labels">
+          <span class="current">VISIT</span><span>TIME</span><span>DETAILS</span><span>READY</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-label="Booking steps" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="step-container" id="step-container" aria-live="polite"></div>
+    </section>
+    <p class="footer-note">A smoother first hello for your next patient.</p>
+  </main>
+
+  <div class="sticky-bar">
+    <div class="sticky-inner">
+      <a class="whatsapp" id="whatsapp-link" href="https://wa.me/?text=Hi%2C%20I%27d%20like%20to%20ask%20about%20booking." target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.6 4.1 1.6 5.9L.2 24l6.5-1.7a11.8 11.8 0 0 0 5.4 1.3h.1c6.5 0 11.8-5.3 11.8-11.8 0-3.1-1.2-6.1-3.5-8.3ZM12.1 21.6c-1.7 0-3.4-.5-4.8-1.3l-.3-.2-3.9 1 1-3.8-.2-.4a9.7 9.7 0 0 1-1.5-5.1c0-5.4 4.4-9.7 9.7-9.7 2.6 0 5 1 6.9 2.9a9.7 9.7 0 0 1 2.8 6.9c0 5.4-4.3 9.7-9.7 9.7Zm5.3-7.3c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.1-.4-2.2-1.3-.8-.7-1.3-1.6-1.5-1.9-.2-.3 0-.4.1-.6l.4-.5.3-.5c.1-.2 0-.4 0-.5 0-.2-.6-1.4-.8-1.9-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.8 2.8 4.3 3.8.6.3 1.1.4 1.5.5.6.2 1.2.2 1.7.1.5-.1 1.6-.7 1.8-1.3.2-.7.2-1.2.2-1.3-.1-.1-.3-.2-.6-.3Z"/></svg>
+        1-Tap WhatsApp Chat
+      </a>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="plaque-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-top">
+        <div><p class="eyebrow">From front desk to phone</p><h3 id="modal-title">Smart Reception QR Desk Plaque</h3></div>
+        <button class="close-modal" id="close-modal" type="button" aria-label="Close preview">×</button>
+      </div>
+      <p>Patients scan the plaque, choose what they need, and share their preferred time before they reach reception.</p>
+      <div class="qr-preview">
+        <div class="qr-grid" id="qr-grid" aria-hidden="true"></div>
+        <div class="qr-copy"><strong id="plaque-clinic">Your Practice Express Hub</strong><span>Scan to start this same express check-in flow. The QR artwork is a visual preview for this demo.</span></div>
+      </div>
+      <button class="primary" id="modal-done" type="button">Back to the demo</button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const params = new URLSearchParams(window.location.search);
+      const rawClinic = params.get("clinic");
+      const clinic = rawClinic && rawClinic.trim() ? rawClinic.trim() : "Your Practice Express Hub";
+      const type = params.get("type");
+      const visitOptions = {
+        dental: [
+          "Urgent Toothache / Broken Tooth",
+          "Routine Check-Up & Gentle Clean",
+          "Teeth Whitening & Smile Consult",
+          "Medical Aid Dental Benefit Check"
+        ],
+        optom: [
+          "Comprehensive 1-Hour Eye Exam",
+          "Broken Glasses / Urgent Eye Strain",
+          "Driver's License Eye Certificate",
+          "Medical Aid Optical Benefit Check"
+        ],
+        aesthetic: [
+          "Skin & Facial Consultation",
+          "Anti-Wrinkle / Dermal Filler Consult",
+          "Laser Treatment Session",
+          "Package & Payment Plan Check"
+        ]
+      };
+      const options = visitOptions[type] || visitOptions.dental;
+      const clinicName = document.getElementById("clinic-name");
+      const progressFill = document.getElementById("progress-fill");
+      const progressBar = document.querySelector('[role="progressbar"]');
+      const progressLabels = Array.from(document.querySelectorAll("#progress-labels span"));
+      const stepContainer = document.getElementById("step-container");
+      const whatsappLink = document.getElementById("whatsapp-link");
+      const plaqueModal = document.getElementById("plaque-modal");
+      let step = 1;
+      let selectedVisit = "";
+      let selectedTime = "";
+      let patient = { name: "", phone: "", medicalAid: false };
+
+      clinicName.textContent = clinic;
+      document.title = clinic + " | Express Booking Hub";
+      document.getElementById("plaque-clinic").textContent = clinic;
+      const phone = (params.get("phone") || "").replace(/[^\d]/g, "");
+      const chatMessage = "Hi " + clinic + ", I would like to ask about booking an appointment.";
+      whatsappLink.href = "https://wa.me/" + (phone || "") + "?text=" + encodeURIComponent(chatMessage);
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, function (char) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char];
+        });
+      }
+
+      function updateProgress() {
+        progressFill.style.width = (step * 25) + "%";
+        progressBar.setAttribute("aria-valuenow", String(step));
+        progressLabels.forEach(function (label, index) {
+          label.classList.toggle("current", index === step - 1);
+        });
+      }
+
+      function advance(nextStep) {
+        step = nextStep;
+        updateProgress();
+        render();
+        stepContainer.focus({ preventScroll: true });
+      }
+
+      function render() {
+        let content = "";
+        if (step === 1) {
+          content = '<section class="step"><p class="eyebrow">Step 1 of 4 · Your visit</p><h2>How can we help?</h2><p class="intro">Choose the option that best fits. We’ll take it from here.</p><div class="options">' +
+            options.map(function (option, index) {
+              return '<button class="option" type="button" data-visit="' + index + '"><span class="option-label">' + escapeHtml(option) + '</span><span class="option-arrow" aria-hidden="true">›</span></button>';
+            }).join("") + '</div></section>';
+        } else if (step === 2) {
+          const times = [
+            ["Today / ASAP", "Priority slots open", "↗"],
+            ["Tomorrow Morning", "A fresh start to your day", "☀"],
+            ["This Week", "Choose a time that suits", "◷"],
+            ["Saturday / Weekend", "Weekend availability", "⌑"]
+          ];
+          content = '<section class="step"><p class="eyebrow">Step 2 of 4 · Preferred timing</p><h2>When works for you?</h2><p class="intro">Pick a preference. The team can confirm an exact time.</p><div class="timing-grid">' +
+            times.map(function (item, index) {
+              return '<button class="option time-option" type="button" data-time="' + index + '"><span class="time-icon" aria-hidden="true">' + item[2] + '</span><span class="option-label">' + item[0] + '</span><span class="hint">' + item[1] + '</span></button>';
+            }).join("") + '</div></section>';
+        } else if (step === 3) {
+          content = '<section class="step"><p class="eyebrow">Step 3 of 4 · Your details</p><h2>Almost there.</h2><p class="intro">Add your contact details so the practice can follow up.</p><div class="summary"><span class="summary-pill">' + escapeHtml(selectedVisit) + '</span><span class="summary-pill">' + escapeHtml(selectedTime) + '</span></div>' +
+            '<form id="booking-form" novalidate><label class="field"><span class="field-label">Patient First Name</span><input class="input" name="firstName" type="text" autocomplete="given-name" placeholder="e.g. Alex" required maxlength="60"></label>' +
+            '<label class="field"><span class="field-label">WhatsApp Number</span><input class="input" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="e.g. 082 000 0000" required maxlength="25"></label>' +
+            '<label class="checkbox-row"><input name="medicalAid" type="checkbox"><span>Claiming via Medical Aid (Discovery / Bonitas / Momentum)</span></label>' +
+            '<p class="error" id="form-error" role="alert"></p><button class="primary" type="submit">Confirm &amp; Lock Slot on WhatsApp <span aria-hidden="true">→</span></button>' +
+            '<p class="privacy-note">Prototype only: details stay in this browser and are not sent or stored.</p></form></section>';
+        } else {
+          const payload = {
+            event: "express_booking_demo",
+            clinic: clinic,
+            patient_first_name: patient.name,
+            whatsapp_number: patient.phone,
+            visit: selectedVisit,
+            preferred_time: selectedTime,
+            medical_aid: patient.medicalAid,
+            source: "clinic_express_hub"
+          };
+          content = '<section class="step"><p class="eyebrow">Step 4 of 4 · Automation proof</p><h2>That was easy.</h2><p class="intro">Here’s how an express check-in handoff can feel.</p>' +
+            '<div class="success-card"><div class="success-heading"><span class="check-icon" aria-hidden="true">✓</span><span>Slot Held! WhatsApp Sent in 2.4s</span></div>' +
+            '<p class="success-copy">Hi ' + escapeHtml(patient.name) + ', ' + escapeHtml(clinic) + ' can send an instant express check-in link so you can complete your details before arriving.</p>' +
+            '<p class="demo-disclaimer">Demo simulation only — no appointment was reserved and no WhatsApp message was sent.</p></div>' +
+            '<div class="terminal"><div class="terminal-head"><span class="terminal-dot" aria-hidden="true"></span>⚡ Live Receptionist &amp; Calendar Webhook (Triggered 24/7)</div>' +
+            '<pre class="terminal-body" id="payload"></pre><div class="terminal-foot">PREVIEW ONLY · In a live setup, this event would be routed to the practice team.</div></div>' +
+            '<div class="proof-actions"><button class="secondary" id="reset-flow" type="button">Test Another Patient Flow</button><button class="plaque-button" id="open-plaque" type="button">Preview the Smart Reception QR Desk Plaque</button></div></section>';
+        }
+
+        stepContainer.innerHTML = content;
+        if (step === 1) {
+          stepContainer.querySelectorAll("[data-visit]").forEach(function (button) {
+            button.addEventListener("click", function () {
+              selectedVisit = options[Number(button.dataset.visit)];
+              advance(2);
+            });
+          });
+        } else if (step === 2) {
+          const times = ["Today / ASAP", "Tomorrow Morning", "This Week", "Saturday / Weekend"];
+          stepContainer.querySelectorAll("[data-time]").forEach(function (button) {
+            button.addEventListener("click", function () {
+              selectedTime = times[Number(button.dataset.time)];
+              advance(3);
+            });
+          });
+        } else if (step === 3) {
+          document.getElementById("booking-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const firstName = form.elements.firstName.value.trim();
+            const number = form.elements.phone.value.trim();
+            const digits = number.replace(/\D/g, "");
+            const error = document.getElementById("form-error");
+            if (!firstName || firstName.length > 60 || digits.length < 7 || digits.length > 15) {
+              error.textContent = !firstName ? "Enter your first name to continue." : "Enter a valid WhatsApp number (7–15 digits).";
+              error.style.display = "block";
+              (!firstName ? form.elements.firstName : form.elements.phone).focus();
+              return;
+            }
+            patient = { name: firstName, phone: number, medicalAid: form.elements.medicalAid.checked };
+            advance(4);
+          });
+        } else {
+          document.getElementById("payload").textContent = JSON.stringify(payload, null, 2);
+          document.getElementById("reset-flow").addEventListener("click", function () {
+            selectedVisit = "";
+            selectedTime = "";
+            patient = { name: "", phone: "", medicalAid: false };
+            advance(1);
+          });
+          document.getElementById("open-plaque").addEventListener("click", openModal);
+        }
+      }
+
+      function openModal() {
+        plaqueModal.classList.add("open");
+        document.getElementById("close-modal").focus();
+      }
+      function closeModal() {
+        plaqueModal.classList.remove("open");
+        document.getElementById("open-plaque").focus();
+      }
+      document.getElementById("close-modal").addEventListener("click", closeModal);
+      document.getElementById("modal-done").addEventListener("click", closeModal);
+      plaqueModal.addEventListener("click", function (event) {
+        if (event.target === plaqueModal) closeModal();
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && plaqueModal.classList.contains("open")) closeModal();
+      });
+
+      const qrPattern = [
+        "111101011", "100101101", "101101001", "111100111", "000101010",
+        "101110101", "011001110", "110101001", "101011111"
+      ];
+      const qrGrid = document.getElementById("qr-grid");
+      qrPattern.join("").split("").forEach(function (bit) {
+        const cell = document.createElement("span");
+        if (bit !== "1") cell.className = "off";
+        qrGrid.appendChild(cell);
+      });
+
+      stepContainer.setAttribute("tabindex", "-1");
+      updateProgress();
+      render();
+    }());
+  </script>
+</body>
+</html>
